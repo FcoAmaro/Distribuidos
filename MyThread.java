@@ -155,7 +155,7 @@ public class MyThread implements Runnable {
 			for (int counter = 0; counter < temp; counter++) {
 				incoming = s.accept();
 				if (Election.isPingFlag())
-					System.out.println(this.process.getName() + ": Yes (Exp: "+ this.process.getExp() +")");
+					System.out.println(this.process.getName() + ": Yes (Exp: "+ this.process.getExp() +"; id: "+ this.process.getPid() +" )");
 				
 				Scanner scan = new Scanner(incoming.getInputStream());
 				PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);
@@ -215,7 +215,7 @@ public class MyThread implements Runnable {
 					if (Election.isElectionFlag()) {
 						if (!sendMessage()) {
 							Election.setElectionFlag(false);
-							System.out.println("New coordinator: P" + this.process.getPid());
+							System.out.println("New coordinator: " + this.process.getName());
 							this.process.setCoOrdinatorFlag(true);
 							for (int i = 0; i < total_processes; i++) {
 								MyThread.setMessageFlag(false, i);

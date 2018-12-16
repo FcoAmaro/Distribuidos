@@ -33,10 +33,15 @@ public class Election {
 
 	public static void initialElection(MyThread[] t) {
 		Process temp = new Process(-1, "", 0, -1);
-		for (int i = 0; i < t.length; i++)
-			if (temp.getExp() < t[i].getProcess().getExp())
-				temp = t[i].getProcess();
+		int k = -1;
+		int j = -1;
+		for (int i = 0; i < t.length; i++){
+			if (t[i].getProcess().getType() == 0 && t[i].getProcess().getExp() > k){
+				k = t[i].getProcess().getExp();
+				j = i;
+			}
+		}
 		
-		t[temp.pid - 1].getProcess().isCoordinator = true;
+		t[j].getProcess().isCoordinator = true;
 	}
 }
