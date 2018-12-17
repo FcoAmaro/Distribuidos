@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.lang.Thread;
 import java.util.Set;
+import java.util.logging.*;
 
 public class Main{
    
@@ -22,7 +23,6 @@ public class Main{
     static String json1 = "doctor.json";
     static String json2 = "requerimientos.json";
     static String json3 = "pacientes.json";
-
 
     public static void main(String[] args) throws Exception{
         //listas con los trabajadores locales
@@ -217,18 +217,32 @@ public class Main{
 
 
     public static void MostrarRequerimientos(List<Requerimientos> requerimientoslocales){
-        for(int j=0; j<requerimientoslocales.size(); j++){
-                //System.out.println("Id: "+requerimientoslocales.get(j).getId());
-                //System.out.println("Cargo: "+requerimientoslocales.get(j).getCargo());
-                //System.out.println("Mostrando requerimientos pacientes: ");
-                for(int i=0; i<requerimientoslocales.get(j).getListado().size(); i++){
-                    System.out.println("Accesso del "+requerimientoslocales.get(j).getCargo()+
-                    " "+requerimientoslocales.get(j).getId()+" a ficha de paciente "+requerimientoslocales.get(j).getListado().get(i).getId());
-                    System.out.println("Procedimiento: "+requerimientoslocales.get(j).getListado().get(i).getProcedimiento());
+        Logger logger = Logger.getLogger("MyLog");  
+        FileHandler fh; 
+        try {
+            // This block configure the logger with handler and formatter  
+            fh = new FileHandler("LogFile.log");  
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();  
+            fh.setFormatter(formatter);  
+            for(int j=0; j<requerimientoslocales.size(); j++){
+                    //System.out.println("Id: "+requerimientoslocales.get(j).getId());
+                    //System.out.println("Cargo: "+requerimientoslocales.get(j).getCargo());
+                    //System.out.println("Mostrando requerimientos pacientes: ");
+                    for(int i=0; i<requerimientoslocales.get(j).getListado().size(); i++){
+                        logger.info("Accesso del "+requerimientoslocales.get(j).getCargo()+
+                        " "+requerimientoslocales.get(j).getId()+" a ficha de paciente "+requerimientoslocales.get(j).getListado().get(i).getId()+
+                        "\nProcedimiento: "+requerimientoslocales.get(j).getListado().get(i).getProcedimiento());
 
-                }
-                
-        }
+                    }
+                    
+            }
+            System.out.println("Logfile generado");
+        } catch (SecurityException e) {  
+            e.printStackTrace();  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }  
     }   
 
 
