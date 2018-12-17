@@ -36,10 +36,10 @@ public class MyClientSocket extends Thread {
     private void iniciar2() throws IOException {
         int coordinadorSugerido = 0;
         int experienciaCandidato = 0;
-        for(int i=0; i<doctores.size(); i++){
-            int id=doctores.get(i).getId();
-            int estudios=doctores.get(i).getEstudios();
-            int experiencia=doctores.get(i).getExperiencia();
+        for(int i=0; i<localesdoctores.size(); i++){
+            int id=localesdoctores.get(i).getId();
+            int estudios=localesdoctores.get(i).getEstudios();
+            int experiencia=localesdoctores.get(i).getExperiencia();
             if (estudios+experiencia > experienciaCandidato){
                 coordinadorSugerido = id;
                 experienciaCandidato = estudios+experiencia;
@@ -49,14 +49,6 @@ public class MyClientSocket extends Thread {
         PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
         out.println(msgServer);
         out.flush();
-
-        String input;
-        while (true) {
-            input = scanner.nextLine();
-            PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
-            out.println(input);
-            out.flush();
-        }
     }
 
     private void iniciar() throws IOException {
@@ -211,7 +203,7 @@ public class MyClientSocket extends Thread {
 
         try {
             System.out.println("\r\nConnected to Server: " + socket.getInetAddress()+socket.getPort());
-            iniciar2();  
+            iniciar();  
             }          
 
 

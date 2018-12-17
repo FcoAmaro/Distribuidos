@@ -33,9 +33,6 @@ public class Main{
         List<Requerimientos> requerimientoslocales = new ArrayList<Requerimientos>();
         List<Pacientes> pacientesglobales = new ArrayList<Pacientes>();
 
-        //System.out.println(InetAddress.getLocalHost().getHostName());
-        //System.out.println(InetAddress.getLocalHost().getHostAddress());
-
         String direccion=InetAddress.getLocalHost().getHostAddress().toString();
         System.out.println(direccion);
 
@@ -53,6 +50,10 @@ public class Main{
         JSONObject jsonObject2 =  (JSONObject) obj2;
         JSONArray requerimientos= (JSONArray) jsonObject2.get("requerimientos");
 
+        int procesos = doctor.size() + enfermero.size() + paramedico.size();
+        int nProc = -1;
+        MyThread[] t = new MyThread[procesos];
+
         for(int i=0; i<doctor.size(); i++){
             JSONObject rec =(JSONObject) doctor.get(i);
             String nombre=rec.get("nombre").toString();
@@ -62,6 +63,8 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Doctor doctorsito = new Doctor(nombre,apellido,id,estudios,experiencia);
             doctoreslocales.add(doctorsito);
+            nProc++;
+            t[nProc] = new MyThread(new Process(nProc,"Doctor "+(i+1),0,estudios+experiencia), procesos);
             System.out.println("Doctor " + doctoreslocales.get(i).getNombre());
         }
 
@@ -74,6 +77,8 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Enfermero enfermesito = new Enfermero(nombre,apellido,id,estudios,experiencia);
             enfermeroslocales.add(enfermesito);
+            nProc++;
+            t[nProc] = new MyThread(new Process(nProc,"Enfermero "+(i+1),1,estudios+experiencia), procesos);
             System.out.println("Enfermero " + enfermeroslocales.get(i).getNombre());
         }
 
@@ -87,6 +92,8 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Paramedico paramedisito = new Paramedico(nombre,apellido,id,estudios,experiencia);
             paramedicoslocales.add(paramedisito);
+            nProc++;
+            t[nProc] = new MyThread(new Process(nProc,"Paramédico "+(i+1),2,estudios+experiencia), procesos);
             System.out.println("Paramédico " + paramedicoslocales.get(i).getNombre());
         }
 
@@ -192,35 +199,18 @@ public class Main{
             
         }
 
-        //MostrarRequerimientos(requerimientoslocales);
-        /*for (int i = 0; i < t.length; i++)
-            System.out.println(t[i].getProcess().getName()+" - Exp: " + t[i].getProcess().getExp());
-        */
-        /*
-        if (nProc == (procesos - 1) ){
-            Election.initialElection(t);
+        MostrarRequerimientos(requerimientoslocales);
 
-            for (int i = 0; i < procesos; i++){
-                new Thread(t[i]).start();
-            }
-        } else {
-            System.out.println("Los numeros no calzan");
-        }*/
         try {
-            if (direccion == "10.6.40.146"){
-                System.out.println("Entro a server");
-                MyServerSocket server = new MyServerSocket(direccion,20000);
-                server.start();
-            } else {
-                Thread.sleep(2000);
-                System.out.println("Entro a cliente");
-                MyClientSocket cliente = new MyClientSocket(direccion,20000,doctoreslocales,enfermeroslocales,paramedicoslocales,requerimientoslocales,pacientesglobales);
-                cliente.start();
-            }
-            
+            MyServerSocket server = new MyServerSocket(direccion,20000);
+            server.start();
+            System.out.println("Entro a server");
+            Thread.sleep(2000);
+            MyClientSocket cliente = new MyClientSocket(direccion,20000,doctoreslocales,enfermeroslocales,paramedicoslocales,requerimientoslocales,pacientesglobales);
+            cliente.start();
+            System.out.println("Entro a cliente");
         }
         catch(Exception e){
-             System.out.println("Entro a Exception"+e);
              System.out.println(e.getMessage());
         }
     }
