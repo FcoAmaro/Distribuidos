@@ -53,10 +53,6 @@ public class Main{
         JSONObject jsonObject2 =  (JSONObject) obj2;
         JSONArray requerimientos= (JSONArray) jsonObject2.get("requerimientos");
 
-        int procesos = doctor.size() + enfermero.size() + paramedico.size();
-        int nProc = -1;
-        MyThread[] t = new MyThread[procesos];
-
         for(int i=0; i<doctor.size(); i++){
             JSONObject rec =(JSONObject) doctor.get(i);
             String nombre=rec.get("nombre").toString();
@@ -66,8 +62,6 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Doctor doctorsito = new Doctor(nombre,apellido,id,estudios,experiencia);
             doctoreslocales.add(doctorsito);
-            nProc++;
-            t[nProc] = new MyThread(new Process(nProc,"Doctor "+(i+1),0,estudios+experiencia), procesos);
             System.out.println("Doctor " + doctoreslocales.get(i).getNombre());
         }
 
@@ -80,8 +74,6 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Enfermero enfermesito = new Enfermero(nombre,apellido,id,estudios,experiencia);
             enfermeroslocales.add(enfermesito);
-            nProc++;
-            t[nProc] = new MyThread(new Process(nProc,"Enfermero "+(i+1),1,estudios+experiencia), procesos);
             System.out.println("Enfermero " + enfermeroslocales.get(i).getNombre());
         }
 
@@ -95,8 +87,6 @@ public class Main{
             int experiencia=(int) (long) rec.get("experiencia");
             Paramedico paramedisito = new Paramedico(nombre,apellido,id,estudios,experiencia);
             paramedicoslocales.add(paramedisito);
-            nProc++;
-            t[nProc] = new MyThread(new Process(nProc,"Paramédico "+(i+1),2,estudios+experiencia), procesos);
             System.out.println("Paramédico " + paramedicoslocales.get(i).getNombre());
         }
 
@@ -202,11 +192,11 @@ public class Main{
             
         }
 
-        System.out.println("Procesos "+nProc);
-        System.out.println("Largo T "+t.length);
+        //MostrarRequerimientos(requerimientoslocales);
         /*for (int i = 0; i < t.length; i++)
             System.out.println(t[i].getProcess().getName()+" - Exp: " + t[i].getProcess().getExp());
         */
+        /*
         if (nProc == (procesos - 1) ){
             Election.initialElection(t);
 
@@ -215,42 +205,39 @@ public class Main{
             }
         } else {
             System.out.println("Los numeros no calzan");
-        }
-        /*
+        }*/
         try {
-            MyServerSocket server = new MyServerSocket(direccion,20000);
-            server.start();
-            System.out.println("Entro a server");
-            Thread.sleep(2000);
-            MyClientSocket cliente = new MyClientSocket(direccion,20000,doctoreslocales,enfermeroslocales,paramedicoslocales,requerimientoslocales,pacientesglobales);
-            cliente.start();
-            System.out.println("Entro a cliente");
+            if (direccion == "10.6.40.146"){
+                System.out.println("Entro a server");
+                MyServerSocket server = new MyServerSocket(direccion,20000);
+                server.start();
+            } else {
+                Thread.sleep(2000);
+                System.out.println("Entro a cliente");
+                MyClientSocket cliente = new MyClientSocket(direccion,20000,doctoreslocales,enfermeroslocales,paramedicoslocales,requerimientoslocales,pacientesglobales);
+                cliente.start();
+            }
             
-
-
-
         }
-
         catch(Exception e){
              System.out.println("Entro a Exception"+e);
-
-
+             System.out.println(e.getMessage());
         }
-        */
     }
 
 
     public static void MostrarRequerimientos(List<Requerimientos> requerimientoslocales){
         for(int j=0; j<requerimientoslocales.size(); j++){
-                System.out.println("Id: "+requerimientoslocales.get(j).getId());
-                System.out.println("Cargo: "+requerimientoslocales.get(j).getCargo());
-                System.out.println("Mostrando requerimientos pacientes: ");
+                //System.out.println("Id: "+requerimientoslocales.get(j).getId());
+                //System.out.println("Cargo: "+requerimientoslocales.get(j).getCargo());
+                //System.out.println("Mostrando requerimientos pacientes: ");
                 for(int i=0; i<requerimientoslocales.get(j).getListado().size(); i++){
-                    System.out.println("Id paciente: "+requerimientoslocales.get(j).getListado().get(i).getId()+" Procedimiento: "+requerimientoslocales.get(j).getListado().get(i).getProcedimiento());
+                    System.out.println("Accesso del "+requerimientoslocales.get(j).getCargo()+
+                    " "+requerimientoslocales.get(j).getId()+" a ficha de paciente "+requerimientoslocales.get(j).getListado().get(i).getId());
+                    System.out.println("Procedimiento: "+requerimientoslocales.get(j).getListado().get(i).getProcedimiento());
 
                 }
-
-
+                
         }
     }   
 
